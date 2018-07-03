@@ -18,9 +18,14 @@ class YourModel(BaseEstimator): # Inherits sklearn base classifier
         pass
     def predict(self, X):
         pass
-    def predict_proba(self, X):
-        pass
     def score(self, X, y, sample_weight = None):
+        pass
+        
+    # Inherting BaseEstimator gives you these for free!
+    # So if you inherit, there's no need to implement these.
+    def get_params(self, deep = True):
+        pass
+    def set_params(self, **params):
         pass
 ```
 
