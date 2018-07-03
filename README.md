@@ -1,5 +1,5 @@
 # `hyperopt`
-A Python machine learning package for grid search hyper-parameter optimization of a classifier using a validation set (not cross validation).
+A Python machine learning package for grid search hyper-parameter optimization using a validation set (not cross validation).
 
 `scikit-learn` implements a [package for grid search hyper-parameter optimization **using cross-validation** on the training dataset](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV). Unfortunately, cross-validation is extremely slow! If your classifier takes 1 hour to train, then with cross-validation and 10 folds, it would take you 9 hours just to try only one (of potentially hundreds) setting of parameters! This won't do.
 
