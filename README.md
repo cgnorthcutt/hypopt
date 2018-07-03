@@ -1,9 +1,9 @@
 # `hyperopt`
 A Python machine learning package for grid search hyper-parameter optimization using a validation set (not cross validation).
 
-`scikit-learn` implements a [package for grid search hyper-parameter optimization **using cross-validation** on the training dataset](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV). Unfortunately, cross-validation is extremely slow! If your classifier takes 1 hour to train, then with cross-validation and 10 folds, it would take you 9 hours just to try only one (of potentially hundreds) setting of parameters! This won't do.
+`scikit-learn` implements a [package for grid search hyper-parameter optimization **using cross-validation** on the training dataset](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV). Unfortunately, cross-validation is extremely slow! If your classifier takes 1 hour to train, then with cross-validation and 10 folds, it would take you 9 hours just to try only one (of potentially hundreds) setting of parameters! Additionally, if you are working with small classification datasets, you often don't have enough examples in each class to split the dataset up into multiple folds. Another solution is needed.
 
-`hyperopt` fills a much needed gap for Python and the `scikit-learn` community by supporting grid search hyper-parameter optimization **when you already have a validation set**, eliminating the extra 8 hours of training time required when using cross-validation. 
+`hyperopt` fills a much needed gap for Python and the `scikit-learn` community by supporting grid search hyper-parameter optimization **when you already have a validation set**, eliminating the extra 8 hours of training time required when using cross-validation. When no validation set is given to `hyperopt.model_selection.fit_model_with_grid_search`, it defaults to using cross-validation on the training set. This allows you to alows use `hyperopt` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
 
 This package works for Python 2.7+ and Python 3+, for any model, and importantly, **runs in parallel on all threads on your CPU automatically**.
 
