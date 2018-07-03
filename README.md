@@ -7,7 +7,7 @@ A Python machine learning package for grid search hyper-parameter optimization u
 
 This package works for Python 2.7+ and Python 3+, for any model, and importantly, **runs in parallel on all threads on your CPU automatically**.
 
-## Use `hyperopt` with any model (PyTorch, Tensorflow, caffe2, scikit-learn, mxnet, etc.)
+## Use `hyperopt` with any model (PyTorch, Tensorflow, caffe2, scikit-learn, etc.)
 All of the features of the `hyperopt` package work with **any model**. Yes, any model. Feel free to use PyTorch, Tensorflow, caffe2, scikit-learn, mxnet, etc. If you use a scikit-learn model, all `hyperopt` methods will work out-of-the-box. It's also easy to use your favorite model from a non-scikit-learn package, just wrap your model into a Python class that inherets the `sklearn.base.BaseEstimator`. Here's an example for a generic classifier:
 ```python
 from sklearn.base import BaseEstimator
