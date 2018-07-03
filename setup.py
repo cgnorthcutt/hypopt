@@ -15,12 +15,12 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 exec(open('hyperopt/version.py').read())
 
 setup(
-    name='hyper-parameter-optimization',
+    name='hyperopt',
     version=__version__,
     license='MIT',
     long_description=long_description,
-    description = 'A family of algorithms and theory for multiclass learning with noisy labels.',
-    url = 'https://github.com/cgnorthcutt/hyper-parameter-optimization',
+    description = 'Grid search hyper-parameter optimization using a validation set (not cross validation)',
+    url = 'https://github.com/cgnorthcutt/hyperopt',
 
     author = 'Curtis G. Northcutt',
     author_email = 'cgn@mit.edu',
