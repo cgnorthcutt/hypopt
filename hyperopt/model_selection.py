@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 # Python 2 and 3 compatibility
@@ -21,7 +21,7 @@ from multiprocessing import Pool
 max_threads = mp.cpu_count()
 
 
-# In[28]:
+# In[ ]:
 
 
 # Analyze results in parallel on all cores.
@@ -59,7 +59,7 @@ def _parallel_param_opt(lst, threads=max_threads):
     return results
 
 
-# In[30]:
+# In[ ]:
 
 
 def fit_model_with_grid_search(
