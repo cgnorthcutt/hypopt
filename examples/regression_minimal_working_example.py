@@ -7,7 +7,7 @@
 
 
 from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
-from hyperopt.model_selection import GridSearch
+from hypopt import GridSearch
 from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVR
