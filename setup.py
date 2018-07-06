@@ -15,7 +15,7 @@ with open(path.join(here, 'docs/README.rst'), encoding='utf-8') as f:
 exec(open('hypopt/version.py').read())
 
 setup(
-    name='python-hypopt',
+    name='hypopt',
     version=__version__,
     license='MIT',
     long_description=long_description,
