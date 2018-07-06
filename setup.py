@@ -33,7 +33,7 @@ setup(
       #   5 - Production/Stable
       'Development Status :: 3 - Alpha',
       'Intended Audience :: Developers',
-      'Topic :: Machine Learning :: Hyper-parameter optimization',
+      'Topic :: Software Development :: Libraries :: Python Modules',
        'License :: OSI Approved :: MIT License',
 
       # We believe this package works will all versions, but we do not guarantee it!
