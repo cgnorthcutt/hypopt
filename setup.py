@@ -15,7 +15,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 exec(open('hyperopt/version.py').read())
 
 setup(
-    name='hyperopt',
+    name='python-hyperopt',
     version=__version__,
     license='MIT',
     long_description=long_description,
