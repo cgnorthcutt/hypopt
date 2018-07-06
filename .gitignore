@@ -1,5 +1,5 @@
 # Added by Curtis G. Northcutt
-hyperopt/*.ipynb
+hypopt/*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
