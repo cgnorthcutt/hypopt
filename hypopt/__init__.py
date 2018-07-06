@@ -1,2 +1,2 @@
-from model_selection import GridSearch
+from hypopt import GridSearch
 from .version import __version__
