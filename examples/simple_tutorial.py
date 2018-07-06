@@ -8,6 +8,8 @@
 # In[1]:
 
 
+from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
+
 from hyperopt.model_selection import GridSearch
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler 

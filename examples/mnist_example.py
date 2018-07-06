@@ -3,10 +3,12 @@
 
 # ## MNIST example with hyper-parameter optimization on a validation set using `hyperopt`
 # 
-# In this simple tutorial, we show how to use hyperopt on the well known MNIST handwritten digits dataset. We use a neural network as the model, but any model works.
+# #### In this simple tutorial, we show how to use hyperopt on the well known MNIST handwritten digits dataset. We use a neural network as the model, but any model works.
 
 # In[1]:
 
+
+from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
 
 from hyperopt.model_selection import GridSearch
 from sklearn.datasets import load_iris
@@ -63,7 +65,7 @@ X_test = scaler.transform(X_test)
 
 
 # ### Grid-search time comparison using validation set versus cross-validation. 
-# ### The hyperopt package automatically distributes work on all CPU threads regardless of if you use a validation set or cross-validation.
+# #### The hyperopt package automatically distributes work on all CPU threads regardless of if you use a validation set or cross-validation.
 
 # In[4]:
 
@@ -92,7 +94,7 @@ print('VALIDATION SCORE (hyper-parameter optimization with validation set):', va
 # In[6]:
 
 
-gs_cv = GridSearch(model = MLPClassifier(max_iter=2, random_state=0), cv_folds=5)
+gs_cv = GridSearch(model = MLPClassifier(max_iter=6, random_state=0), cv_folds=5)
 print("\n\nLet's see how long grid-search takes to run when we don't use a validation set.")
 print("Grid-search using cross-validation.\n","-"*79)
 get_ipython().run_line_magic('time', 'gs_cv.fit(X_train, y_train, param_grid)')

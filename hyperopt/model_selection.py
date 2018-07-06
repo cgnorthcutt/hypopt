@@ -225,8 +225,10 @@ class GridSearch(BaseEstimator):
         sample_weight : np.array<float> of shape (n,) or (n, 1)
           Weights each example when computing the score / accuracy.'''
         
-        if hasattr(self.model, 'score'):        
-            if 'sample_weight' in inspect.getfullargspec(self.model.score).args:
+        if hasattr(self.model, 'score'):
+        
+            # Check if sample_weight in clf.score(). Compatible with Python 2/3.
+            if hasattr(inspect, 'getfullargspec') and                 'sample_weight' in inspect.getfullargspec(self.model.score).args or                 hasattr(inspect, 'getargspec') and                 'sample_weight' in inspect.getargspec(self.model.score).args:  
                 return self.model.score(X, y, sample_weight=sample_weight)
             else:
                 return self.model.score(X, y)
