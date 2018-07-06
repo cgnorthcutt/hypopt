@@ -17,7 +17,7 @@ Stable release:
 
 .. code-block::
 
-   $ pip install hypopt # hyper-parameter optimization
+   $ pip install hypopt
 
 Developer (unstable) release:
 
