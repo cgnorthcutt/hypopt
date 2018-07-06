@@ -13,13 +13,13 @@ Installation
 
 Python 2.7 and Python 3.5 are supported.
 
-To install the stable release of the ``hypopt`` package with pip:
+Stable release:
 
 .. code-block::
 
    $ pip install hypopt # hyper-parameter optimization
 
-To install the developer (unstable) release of the ``hypopt`` package with pip:
+Developer (unstable) release:
 
 .. code-block::
 
