@@ -8,7 +8,7 @@
 # In[1]:
 
 
-from hyperopt.model_selection import fit_model_with_grid_search
+from hyperopt.model_selection import GridSearch
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler 
 from sklearn.model_selection import train_test_split
@@ -26,11 +26,11 @@ warnings.filterwarnings('ignore', category=ConvergenceWarning)
 
 param_grid = {
     'learning_rate': ["constant", "adaptive"],
-    'hidden_layer_sizes': [(100,20), (500,20)],
-    'alpha': [0.0001, 0.001],
-    'warm_start': [True, False],
-    'momentum': [0.9, 0.8],
-    'learning_rate_init': [.001, .01, .0001],
+    'hidden_layer_sizes': [(100,20), (500,20), (20,10), (50,20), (4,2)],
+    'alpha': [0.0001], # minimal effect
+    'warm_start': [False], # minimal effect
+    'momentum': [0.1, 0.9], # minimal effect
+    'learning_rate_init': [0.001, 0.01, 1],
     'max_iter': [50],
     'random_state': [0],
     'activation': ['relu'],
@@ -65,34 +65,52 @@ default = MLPClassifier(max_iter=50, random_state=0)
 default.fit(X_train, y_train)
 test_score = round(default.score(X_test, y_test), 4)
 val_score = round(default.score(X_val, y_val), 4)
-print('\nTEST SCORE (default parameters)', test_score)
-print('VALIDATION SCORE (default parameters)', val_score)
+print('\nTEST SCORE (default parameters):', test_score)
+print('VALIDATION SCORE (default parameters):', val_score)
 
 
 # In[5]:
 
 
-model = MLPClassifier(max_iter=50, random_state=0)
+gs_val = GridSearch(model = MLPClassifier(max_iter=50, random_state=0))
 print("Grid-search using a validation set.\n","-"*79)
-get_ipython().run_line_magic('time', 'trained_clf_val = fit_model_with_grid_search(model, X_train, y_train, param_grid, X_val, y_val)')
-test_score = round(trained_clf_val.score(X_test, y_test), 4)
-val_score = round(trained_clf_val.score(X_val, y_val), 4)
-print('\nTEST SCORE (hyper-parameter optimization with validation set)', test_score)
-print('\nVALIDATION SCORE (hyper-parameter optimization with validation set)', val_score)
+get_ipython().run_line_magic('time', 'gs_val.fit(X_train, y_train, param_grid, X_val, y_val)')
+test_score = round(gs_val.score(X_test, y_test), 4)
+val_score = round(gs_val.score(X_val, y_val), 4)
+print('\nTEST SCORE (hyper-parameter optimization with validation set):', test_score)
+print('VALIDATION SCORE (hyper-parameter optimization with validation set):', val_score)
 
 
 # In[6]:
 
 
-model = MLPClassifier(max_iter=50, random_state=0)
+gs_cv = GridSearch(model = MLPClassifier(max_iter=50, random_state=0), cv_folds=6)
 print("\n\nLet's see how long grid-search takes to run when we don't use a validation set.")
 print("Grid-search using cross-validation.\n","-"*79)
-get_ipython().run_line_magic('time', 'trained_clf_cv = fit_model_with_grid_search(model, X_train, y_train, param_grid, cv_folds = 5)')
-test_score = round(trained_clf_cv.score(X_test, y_test), 4)
-val_score = round(trained_clf_cv.score(X_val, y_val), 4)
-print('\nTEST SCORE (hyper-parameter optimization with cross-validation)', test_score)
-print('\nVALIDATION SCORE (hyper-parameter optimization with cross-validation)', val_score)
+get_ipython().run_line_magic('time', 'gs_cv.fit(X_train, y_train, param_grid)')
+test_score = round(gs_cv.score(X_test, y_test), 4)
+val_score = round(gs_cv.score(X_val, y_val), 4)
+print('\nTEST SCORE (hyper-parameter optimization with cross-validation):', test_score)
+print('VALIDATION SCORE (hyper-parameter optimization with cross-validation):', val_score)
 print('''\nNote that although its slower, cross-validation has many benefits (e.g. uses all
 your training data). Thats why hyperopt also supports cross-validation when no validation 
 set is provided as in the example above.''')
+
+
+# In[7]:
+
+
+print('We can view the best performing parameters and their scores.')
+for z in gs_val.get_param_scores()[:2]:
+    p, s = z
+    print(p)
+    print('Score:', s)
+print()
+print('Verify that the lowest scoring parameters make sense.')
+for z in gs_val.get_param_scores()[-2:]:
+    p, s = z
+    print(p)
+    print('Score:', s)
+print('\nAlas, these did poorly because the hidden layers are too small (4,2) and the learning rate is too high (1).')
+print('Also, note that some of the scores are the same. With hyperopt, you can view all scores and settings to see which parameters really matter.')
 
