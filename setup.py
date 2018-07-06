@@ -12,15 +12,15 @@ with open(path.join(here, 'docs/README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Get version number
-exec(open('hyperopt/version.py').read())
+exec(open('hypopt/version.py').read())
 
 setup(
-    name='python-hyperopt',
+    name='python-hypopt',
     version=__version__,
     license='MIT',
     long_description=long_description,
     description = 'Grid search hyper-parameter optimization using a validation set (not cross validation)',
-    url = 'https://github.com/cgnorthcutt/hyperopt',
+    url = 'https://github.com/cgnorthcutt/hypopt',
 
     author = 'Curtis G. Northcutt',
     author_email = 'cgn@mit.edu',
