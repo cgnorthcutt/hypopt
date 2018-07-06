@@ -1,31 +1,37 @@
 
-``hyperopt``
+``hypopt``
 ================
 
-A Python machine learning package for grid search hyper-parameter optimization using a validation set (not cross validation). This package works for Python 2.7+ and Python 3+, for any model (classification and regression), and **runs in parallel on all threads on your CPU automatically**.
+A Python machine learning package for grid search **hyper-parameter optimization using a validation set** (defaults to cross validation when no validation set is available). This package works for Python 2.7+ and Python 3+, for any model (classification and regression), and **runs in parallel on all threads on your CPU automatically**.
 
-``scikit-learn`` implements a `package for grid search hyper-parameter optimization **using cross-validation** on the training dataset <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV>`_. Unfortunately, cross-validation is often too slow for large datasets and impractical for small datasets because there is not enough data in each class to properly train each fold. Instead, we use a constant validation set to optimize hyper-parameters -- the ``hyperopt`` package makes this fast (distributed on all CPU threads) and easy (one line of code).
+``scikit-learn`` implements a `package for grid search hyper-parameter optimization **using cross-validation** on the training dataset <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV>`_. Unfortunately, cross-validation is often too slow for large datasets and impractical for small datasets because there is not enough data in each class to properly train each fold. Instead, we use a constant validation set to optimize hyper-parameters -- the ``hypopt`` package makes this fast (distributed on all CPU threads) and easy (one line of code).
 
-``hyperopt.model_selection.fit_model_with_grid_search`` supports grid search hyper-parameter optimization **when you already have a validation set**\ , eliminating the extra hours of training time required when using cross-validation. However, when no validation set is given, it defaults to using cross-validation on the training set. This allows you to alows use ``hyperopt`` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
+``hypopt.model_selection.fit_model_with_grid_search`` supports grid search hyper-parameter optimization **when you already have a validation set**\ , eliminating the extra hours of training time required when using cross-validation. However, when no validation set is given, it defaults to using cross-validation on the training set. This allows you to alows use ``hypopt`` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
 
 Installation
 ------------
 
 Python 2.7 and Python 3.5 are supported.
 
-To install the ``hyperopt`` package with pip, just run:
+To install the stable release of the ``hypopt`` package with pip:
 
 .. code-block::
 
-   $ pip install git+https://github.com/cgnorthcutt/hyperopt.git
+   $ pip install hypopt # hyper-parameter optimization
 
-If you have issues, you can also clone the repo and install:
+To install the developer (unstable) release of the ``hypopt`` package with pip:
+
+.. code-block::
+
+   $ pip install git+https://github.com/cgnorthcutt/hypopt.git
+
+To install the codebase (enabling you to make modifications):
 
 .. code-block::
 
    $ conda update pip # if you use conda
-   $ git clone https://github.com/cgnorthcutt/hyperopt.git
-   $ cd hyperopt
+   $ git clone https://github.com/cgnorthcutt/hypopt.git
+   $ cd hypopt
    $ pip install -e .
 
 Examples
@@ -37,7 +43,7 @@ Basic usage
 .. code-block:: python
 
    # Assuming you already have train, test, val sets and a model.
-   from hyperopt.model_selection import GridSearch
+   from hypopt import GridSearch
    param_grid = [
      {'C': [1, 10, 100], 'kernel': ['linear']},
      {'C': [1, 10, 100], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
@@ -51,20 +57,20 @@ Minimal working examples
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-* `Classification minimal working example <https://github.com/cgnorthcutt/hyperopt/blob/master/examples/classification_minimal_working_example.ipynb>`_
-* `Regression minimal working example <https://github.com/cgnorthcutt/hyperopt/blob/master/examples/regression_minimal_working_example.ipynb>`_
+* `Classification minimal working example <https://github.com/cgnorthcutt/hypopt/blob/master/examples/classification_minimal_working_example.ipynb>`_
+* `Regression minimal working example <https://github.com/cgnorthcutt/hypopt/blob/master/examples/regression_minimal_working_example.ipynb>`_
 
 Other Examples including a working example with MNIST
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-* `Simple tutorial of the ``hyperopt`` package. <https://github.com/cgnorthcutt/hyperopt/blob/master/examples/simple_tutorial.ipynb>`_
-* `A working example with MNIST. <https://github.com/cgnorthcutt/hyperopt/blob/master/examples/mnist_example.ipynb>`_
+* `A simple tutorial of the hypopt package. <https://github.com/cgnorthcutt/hypopt/blob/master/examples/simple_tutorial.ipynb>`_
+* `A working example with MNIST. <https://github.com/cgnorthcutt/hypopt/blob/master/examples/mnist_example.ipynb>`_
 
-Use ``hyperopt`` with any model (PyTorch, Tensorflow, caffe2, scikit-learn, etc.)
+Use ``hypopt`` with any model (PyTorch, Tensorflow, caffe2, scikit-learn, etc.)
 -------------------------------------------------------------------------------------
 
-All of the features of the ``hyperopt`` package work with **any model**. Yes, any model. Feel free to use PyTorch, Tensorflow, caffe2, scikit-learn, mxnet, etc. If you use a scikit-learn model, all ``hyperopt`` methods will work out-of-the-box. It's also easy to use your favorite model from a non-scikit-learn package, just wrap your model into a Python class that inherets the ``sklearn.base.BaseEstimator``. Here's an example for a generic classifier:
+All of the features of the ``hypopt`` package work with **any model**. Yes, any model. Feel free to use PyTorch, Tensorflow, caffe2, scikit-learn, mxnet, etc. If you use a scikit-learn model, all ``hypopt`` methods will work out-of-the-box. It's also easy to use your favorite model from a non-scikit-learn package, just wrap your model into a Python class that inherets the ``sklearn.base.BaseEstimator``. Here's an example for a generic classifier:
 
 .. code-block:: python
 
