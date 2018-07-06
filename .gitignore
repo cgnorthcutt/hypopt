@@ -1,5 +1,6 @@
 # Added by Curtis G. Northcutt
 hypopt/*.ipynb
+tests/*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
