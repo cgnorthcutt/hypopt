@@ -8,7 +8,6 @@ python:
 install:
   - pip install tox-travis
   - pip install pytest
-  - pip install pytest-cov
   - pip install -r requirements.txt
   - pip install -e .
 # command to run tests
