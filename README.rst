@@ -2,16 +2,29 @@
 ``hypopt``
 ================
 
+|pypi| |py_versions| |build_status| |coverage|
+
+.. |pypi| image:: https://img.shields.io/pypi/v/hyperopt.svg
+    :target: https://codecov.io/gh/cgnorthcutt/hypopt
+.. |py_versions| image:: https://img.shields.io/pypi/pyversions/hypopt.svg
+    :target: https://pypi.org/pypi/hypopt/
+.. |build_status| image:: https://travis-ci.com/cgnorthcutt/hypopt.svg?branch=master
+    :target: https://travis-ci.com/cgnorthcutt/hypopt
+.. |coverage| image:: https://codecov.io/gh/cgnorthcutt/hypopt/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/cgnorthcutt/hypopt
+    
+    
+
 A Python machine learning package for grid search **hyper-parameter optimization using a validation set** (defaults to cross validation when no validation set is available). This package works for Python 2.7+ and Python 3+, for any model (classification and regression), and **runs in parallel on all threads on your CPU automatically**.
 
-``scikit-learn`` implements a `package for grid search hyper-parameter optimization **using cross-validation** on the training dataset <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV>`_. Unfortunately, cross-validation is often too slow for large datasets and impractical for small datasets because there is not enough data in each class to properly train each fold. Instead, we use a constant validation set to optimize hyper-parameters -- the ``hypopt`` package makes this fast (distributed on all CPU threads) and easy (one line of code).
+``scikit-learn`` provides a package for `grid-search hyper-parameter optimization **using cross-validation** on the training dataset <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV>`_. Unfortunately, cross-validation is impractically slow for large datasets and fails for small datasets due to the lack of data in each class needed to properly train each fold. Instead, we use a constant validation set to optimize hyper-parameters -- the ``hypopt`` package makes this fast (distributed on all CPU threads) and easy (one line of code).
 
 ``hypopt.model_selection.fit_model_with_grid_search`` supports grid search hyper-parameter optimization **when you already have a validation set**\ , eliminating the extra hours of training time required when using cross-validation. However, when no validation set is given, it defaults to using cross-validation on the training set. This allows you to alows use ``hypopt`` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
 
 Installation
 ------------
 
-Python 2.7 and Python 3.5 are supported.
+Python 2.7, 3.4, 3.5, and 3.6 are supported.
 
 Stable release:
 
