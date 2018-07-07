@@ -19,6 +19,9 @@ matrix:
         - python: pypy
           dist: trusty
           sudo: false
+        - python: pypy3
+          dist: trusty
+          sudo: false
 # command to install dependencies
 install:
   - pip install tox-travis
