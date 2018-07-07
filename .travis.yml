@@ -29,7 +29,7 @@ matrix:
 install:
   - pip install tox-travis
   - pip install pytest
-  # - pip install -r requirements.txt
+  - pip install -r requirements.txt
   - pip install -e .
 # command to run tests
 script:
