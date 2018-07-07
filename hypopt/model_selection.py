@@ -257,13 +257,13 @@ class GridSearch(BaseEstimator):
         return self.best_score
 
 
-    def get_params(self):
+    def get_ranked_params(self):
         '''Accessor to return params, a list of parameter dicts,
         ordered by descending score on the validation set.'''
         return self.params
 
 
-    def get_scores(self):
+    def get_ranked_scores(self):
         '''Accessor to return scores, a list of scores ordered
         by descending score on the validation set.'''
         return self.scores
