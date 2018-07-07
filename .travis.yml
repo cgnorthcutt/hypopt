@@ -13,4 +13,5 @@ install:
   - pip install -e .
 # command to run tests
 script:
-  - tox # or py.test for Python versions 3.5 and below
+  - tox 
+  - bash <(curl -s https://codecov.io/bash) -t a9a27c70-d1dd-4d8b-bd05-8a506ce24fb2
