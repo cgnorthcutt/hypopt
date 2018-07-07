@@ -14,19 +14,12 @@ matrix:
           dist: trusty
           sudo: false
         - python: 3.7
-          dist: xenial
+          dist: trusty
           sudo: true
-        - python: pypy
-          dist: trusty
-          sudo: false
-        - python: pypy3
-          dist: trusty
-          sudo: false
 # command to install dependencies
 install:
   - pip install tox-travis
   - pip install pytest
-  - pip install -U scipy
   - pip install -r requirements.txt
   - pip install -e .
 # command to run tests
