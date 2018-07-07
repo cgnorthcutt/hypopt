@@ -5,7 +5,7 @@
 |pypi| |py_versions| |build_status| |coverage|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/hyperopt.svg
-    :target: https://codecov.io/gh/cgnorthcutt/hypopt
+    :target: https://pypi.org/pypi/hypopt/
 .. |py_versions| image:: https://img.shields.io/pypi/pyversions/hypopt.svg
     :target: https://pypi.org/pypi/hypopt/
 .. |build_status| image:: https://travis-ci.com/cgnorthcutt/hypopt.svg?branch=master
