@@ -14,7 +14,19 @@ matrix:
           dist: trusty
           sudo: false
         - python: 3.7
-          dist: trusty
+          dist: bionic
+          sudo: true
+        - python: 3.7
+          dist: artful
+          sudo: true
+        - python: 3.7
+          dist: rawhide
+          sudo: true
+        - python: 3.7
+          dist: stretch
+          sudo: true
+        - python: 3.7
+          dist: jessie
           sudo: true
 # command to install dependencies
 install:
