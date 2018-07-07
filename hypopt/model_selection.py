@@ -20,6 +20,8 @@ import multiprocessing as mp
 from multiprocessing import Pool
 max_threads = mp.cpu_count()
 
+SUPPRESS_WARNINGS = False
+
 
 # In[ ]:
 
@@ -43,13 +45,13 @@ def _run_thread_job(params):
         if hasattr(model, 'score'):        
             score = model.score(job_params["X_val"], job_params["y_val"])
         else:            
-            score = accuracy_score(y_val, model.predict(job_params["X_val"]))
+            score = accuracy_score(job_params["y_val"], model.predict(job_params["X_val"]))
         return (model, score)
 
     except Exception as e:
-        # Supress warning
-#         warnings.warn('ERROR in thread' + str(mp.current_process()) + "with exception:\n" + str(e))
-        return None
+        if not SUPPRESS_WARNINGS:
+            warnings.warn('ERROR in thread' + str(mp.current_process()) + "with exception:\n" + str(e))
+            return None
 
 def _parallel_param_opt(lst, threads=max_threads):
     pool = mp.Pool(threads)
@@ -233,7 +235,7 @@ class GridSearch(BaseEstimator):
             else:
                 return self.model.score(X, y)
         else:
-            return accuracy_score(y, self.model.predict(X_val), sample_weight=sample_weight) 
+            return accuracy_score(y, self.model.predict(X), sample_weight=sample_weight) 
         
     
     def get_param_scores(self):
