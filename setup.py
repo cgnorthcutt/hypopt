@@ -1,5 +1,9 @@
 # Written by Curtis G. Northcutt
 
+# For pypi upload
+# 1. python setup.py sdist bdist_wheel --universal
+# 2. twine upload dist/*
+
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
