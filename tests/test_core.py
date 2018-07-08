@@ -8,11 +8,12 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 print('here')
 from sklearn.model_selection import train_test_split
 from hypopt import GridSearch
+from sklearn.datasets import load_breast_cancer
 from sklearn.svm import SVC
 import pytest
 
 
-# In[ ]:
+# In[15]:
 
 
 from sklearn.base import BaseEstimator
@@ -29,6 +30,28 @@ class Model_without_score(BaseException):
 
     def predict(self, X):
         return self.model.predict(X)
+
+    def get_params(self, deep = True):
+        return self.model.get_params(deep = deep)
+
+    def set_params(self, **params):
+        return self.model.set_params(**params)   
+
+class Model_without_sample_weight(BaseException):
+    '''Simple test class of an sklearn model without score function'''
+
+    def __init__(self, model = None):
+        self.model = model
+        self.seed = 0
+
+    def fit(self, X, y, sample_weight = None):
+        return self.model.fit(X, y, sample_weight=sample_weight)
+
+    def predict(self, X):
+        return self.model.predict(X)
+    
+    def score(self, X, y):
+        return self.model.score(X, y, sample_weight = None)
 
     def get_params(self, deep = True):
         return self.model.get_params(deep = deep)
@@ -57,14 +80,6 @@ class Model_that_throws_exception(BaseException):
         return self.model.set_params(**params)
 
 
-# In[ ]:
-
-
-def test_no_score_model():
-    model = Model_without_score(model=SVC())
-    test_classification(model)
-
-
 # In[7]:
 
 
@@ -73,9 +88,8 @@ def test_classification(
     return_model = False,
     param_grid = None,
     opt_score = 0.9240,
-):
-    from sklearn.datasets import load_breast_cancer
-    
+    assertions = True,
+):    
     data = load_breast_cancer()
 
     # Create test and train sets from one dataset
@@ -113,8 +127,9 @@ def test_classification(
     default = SVC(random_state=0)
     default.fit(X_train, y_train)
     
-    assert(round(default.score(X_test, y_test), 4) == 0.6257)
-    assert(round(opt.score(X_test, y_test), 4) == opt_score)
+    if assertions:
+        assert(round(default.score(X_test, y_test), 4) == 0.6257)
+        assert(round(opt.score(X_test, y_test), 4) == opt_score)
     
     if return_model:
         return opt
@@ -167,10 +182,7 @@ def test_regression():
 # In[9]:
 
 
-def test_gridsearch_crossval():
-    from sklearn.datasets import load_breast_cancer
-    from sklearn.svm import SVC
-    
+def test_gridsearch_crossval():    
     data = load_breast_cancer()
 
     # Create test and train sets from one dataset
@@ -212,9 +224,17 @@ def test_accessors():
 # In[11]:
 
 
-# def test_no_score_model():
-#     model = Model_without_score(model=SVC())
-#     test_classification(model)
+def test_no_score_model():
+    model = Model_without_sample_weight(model=SVC())
+    test_classification(model)
+
+
+# In[ ]:
+
+
+def test_no_sample_weight_model():
+    model = Model_without_score(model=SVC())
+    test_classification(model)
 
 
 # In[12]:
@@ -224,6 +244,33 @@ def test_exception():
     model = Model_that_throws_exception(model=SVC())
     with pytest.raises(ValueError):
         test_classification(model)
+
+
+# In[16]:
+
+
+def test_prob_methods():
+    from sklearn.linear_model import LogisticRegression   
+    data = load_breast_cancer()
+
+    # Create test and train sets from one dataset
+    X_train, X_test, y_train, y_test = train_test_split(
+        data["data"], 
+        data["target"], 
+        test_size = 0.3, 
+        random_state = 0,
+        stratify = data["target"],
+    )
+
+    # List the parameters to search across
+    param_grid = {'C': [1, 10, 100, 120, 150]}
+        
+    # Grid-search all parameter combinations using a validation set.
+    model = GridSearch(LogisticRegression())
+    model.fit(X_train, y_train, param_grid, verbose = False)
+    
+    assert(model.predict(X_test) is not None)
+    assert(model.predict_proba(X_test) is not None)
 
 
 # In[42]:
