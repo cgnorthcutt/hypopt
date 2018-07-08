@@ -267,7 +267,7 @@ def test_prob_methods():
         
     # Grid-search all parameter combinations using a validation set.
     model = GridSearch(LogisticRegression())
-    model.fit(X_train, y_train, param_grid, verbose = False)
+    model.fit(X_train, y_train, param_grid, verbose = True)
     
     assert(model.predict(X_test) is not None)
     assert(model.predict_proba(X_test) is not None)
