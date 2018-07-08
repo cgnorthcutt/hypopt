@@ -106,6 +106,6 @@ All of the features of the ``hypopt`` package work with **any model**. Yes, any 
            pass
            
 PyTorch MNIST CNN Example
-^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * `Example (taken from the confidentlearning package) of a Pytorch MNIST CNN wrapped in the above class. <https://github.com/cgnorthcutt/confidentlearning/blob/master/examples/models/mnist_pytorch.py>`_
