@@ -121,7 +121,7 @@ def test_classification(
 
     # Grid-search all parameter combinations using a validation set.
     opt = GridSearch(model)
-    opt.fit(X_train, y_train, param_grid, X_val, y_val, verbose = False)
+    opt.fit(X_train, y_train, param_grid, X_val, y_val, verbose = True)
 
     # Compare with default model without hyperopt
     default = SVC(random_state=0)
@@ -267,7 +267,7 @@ def test_prob_methods():
         
     # Grid-search all parameter combinations using a validation set.
     model = GridSearch(LogisticRegression())
-    model.fit(X_train, y_train, param_grid, verbose = True)
+    model.fit(X_train, y_train, param_grid, verbose = False)
     
     assert(model.predict(X_test) is not None)
     assert(model.predict_proba(X_test) is not None)
