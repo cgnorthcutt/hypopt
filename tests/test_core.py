@@ -386,6 +386,7 @@ def test_scoring():
         make_scorer(clf_custom_score_func),
         'accuracy',
         'brier_score_loss',
+        'average_precision',
         'f1',
         'f1_micro',
         'f1_macro',
@@ -415,6 +416,18 @@ def test_scoring():
                 assertions = False, 
                 scoring = classification_metric,
             )
+
+
+# In[68]:
+
+
+def test_scoring_invalid_metric():
+    with pytest.raises(ValueError):
+        test_classification(
+            verbose = True, 
+            assertions = False, 
+            scoring = 'not_a_valid_metric_name',
+        )
 
 
 # In[ ]:
