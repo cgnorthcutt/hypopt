@@ -19,7 +19,7 @@ A Python machine learning package for grid search **hyper-parameter optimization
 
 ``scikit-learn`` provides a package for `grid-search hyper-parameter optimization **using cross-validation** on the training dataset <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV>`_. Unfortunately, cross-validation is impractically slow for large datasets and fails for small datasets due to the lack of data in each class needed to properly train each fold. Instead, we use a constant validation set to optimize hyper-parameters -- the ``hypopt`` package makes this fast (distributed on all CPU threads) and easy (one line of code).
 
-``hypopt.model_selection.fit_model_with_grid_search`` supports grid search hyper-parameter optimization **when you already have a validation set**\ , eliminating the extra hours of training time required when using cross-validation. However, when no validation set is given, it defaults to using cross-validation on the training set. This allows you to alows use ``hypopt`` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
+``hypopt.model_selection.fit_model_with_grid_search`` supports grid search hyper-parameter optimization **when you already have a validation set** , eliminating the extra hours of training time required when using cross-validation. However, when no validation set is given, it defaults to using cross-validation on the training set. This allows you to alows use ``hypopt`` anytime you need to do hyper-parameter optimization with grid-search, regardless of whether you use a validation set or cross-validation.
 
 Installation
 ------------
@@ -81,7 +81,7 @@ It's easy to use a different scoring metric using the ``scoring`` parameter in `
 * For classification, `hypopt` supports these string-named metrics: 'accuracy', 'brier_score_loss', 'average_precision', 'f1', 'f1_micro', 'f1_macro', 'f1_weighted', 'neg_log_loss', 'precision', 'recall', or 'roc_auc'. 
 * For regression, `hypopt` supports: "explained_variance", "neg_mean_absolute_error", "neg_mean_squared_error", "neg_mean_squared_log_error", "neg_median_absolute_error", "r2".
 
-You can also create your own metric ``your_custom_score_func(y_true, y_pred)`` by wrapping it into an object using `sklearn.metrics.make_scorer<http://scikit-learn.org/stable/modules/generated/sklearn.metrics.make_scorer.html>`_:
+You can also create your own metric ``your_custom_score_func(y_true, y_pred)`` by wrapping it into an object using `sklearn.metrics.make_scorer <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.make_scorer.html>`_ like:
 
 .. code-block:: python
 
