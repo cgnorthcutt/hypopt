@@ -66,10 +66,10 @@ Basic usage
    gs.fit(X_train, y_train, param_grid, X_val, y_val)
    print('Test Score for Optimized Parameters:', gs.score(X_test, y_test))
    
-Choosing Scoring Metric
-^^^^^^^^^^^^^^^^^^^^^^^
+Choosing the scoring metric to optimize
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-They default metric of the ``hypopt`` package is the the ``score()`` function for whatever model you use, so in the previous example ``SVR().score()`` is optimized, which defaults to accuracy.
+The default metric is the the ``model.score()`` function, so in the previous example ``SVR().score()`` is optimized, which defaults to accuracy.
 
 It's easy to use a different scoring metric using the ``scoring`` parameter in ``hypopt.GridSearch.fit()``:
 
