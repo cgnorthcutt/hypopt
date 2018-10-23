@@ -65,6 +65,29 @@ Basic usage
    gs = GridSearch(model = SVR())
    gs.fit(X_train, y_train, param_grid, X_val, y_val)
    print('Test Score for Optimized Parameters:', gs.score(X_test, y_test))
+   
+Choosing Scoring Metric
+^^^^^^^^^^^^^^^^^^^^^^^
+
+They default metric of the ``hypopt`` package is the the ``score()`` function for whatever model you use, so in the previous example ``SVR().score()`` is optimized, which defaults to accuracy.
+
+It's easy to use a different scoring metric using the ``scoring`` parameter in ``hypopt.GridSearch.fit()``:
+
+.. code-block:: python
+
+    # This will use f1 score as the scoring metric that you optimize.
+    gs.fit(X_train, y_train, params, X_val, y_val, scoring='f1')
+
+* For classification, `hypopt` supports these string-named metrics: 'accuracy', 'brier_score_loss', 'average_precision', 'f1', 'f1_micro', 'f1_macro', 'f1_weighted', 'neg_log_loss', 'precision', 'recall', or 'roc_auc'. 
+* For regression, `hypopt` supports: "explained_variance", "neg_mean_absolute_error", "neg_mean_squared_error", "neg_mean_squared_log_error", "neg_median_absolute_error", "r2".
+
+You can also create your own metric ``your_custom_score_func(y_true, y_pred)`` by wrapping it into an object using `sklearn.metrics.make_scorer<http://scikit-learn.org/stable/modules/generated/sklearn.metrics.make_scorer.html>`_:
+
+.. code-block:: python
+
+    from sklearn.metrics import make_scorer
+    scorer = make_scorer(your_custom_scoring_func)
+    opt.fit(X_train, y_train, params, X_val, y_val, scoring=scorer)
 
 Minimal working examples
 ^^^^^^^^^^^^^^^^^^^^^^^^
