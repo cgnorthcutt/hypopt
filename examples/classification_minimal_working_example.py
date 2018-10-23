@@ -47,11 +47,13 @@ param_grid = {
 
 # Grid-search all parameter combinations using a validation set.
 gs = GridSearch(model = SVC(random_state=0))
-gs.fit(X_train, y_train, param_grid, X_val, y_val)
+# You can choose the metric to optimize (f1, auc_roc, accuracy, etc.)
+# scoring = None will default to optimizing model.score()
+_ = gs.fit(X_train, y_train, param_grid, X_val, y_val, scoring = 'f1')
 
 # Compare with default model without hyperopt
 default = SVC(random_state=0)
-default.fit(X_train, y_train)
+_ = default.fit(X_train, y_train)
 print('\nTest score comparison (larger is better):')
 print('Non-optimized Parameters:', round(default.score(X_test, y_test), 4))
 print('Optimized Parameters:', round(gs.score(X_test, y_test), 4))
