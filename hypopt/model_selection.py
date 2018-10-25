@@ -73,7 +73,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     elif scoring_metric == 'f1_weighted':
         return metrics.f1_score(y, model.predict(X), average = 'weighted', **scoring_params)
     elif scoring_metric == 'neg_log_loss':
-        return metrics.log_loss(y, model.predict(X), **scoring_params)
+        return -1. * metrics.log_loss(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'precision':
         return metrics.precision_score(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'recall':
@@ -83,13 +83,13 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     elif scoring_metric == 'explained_variance':
         return metrics.explained_variance_score(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'neg_mean_absolute_error':
-        return metrics.mean_absolute_error(y, model.predict(X), **scoring_params)
+        return -1. * metrics.mean_absolute_error(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'neg_mean_squared_error':
-        return metrics.mean_squared_error(y, model.predict(X), **scoring_params)
+        return -1. * metrics.mean_squared_error(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'neg_mean_squared_log_error':
-        return metrics.mean_squared_log_error(y, model.predict(X), **scoring_params)
+        return -1. * metrics.mean_squared_log_error(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'neg_median_absolute_error':
-        return metrics.median_absolute_error(y, model.predict(X), **scoring_params)
+        return -1. * metrics.median_absolute_error(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'r2':
         return metrics.r2_score(y, model.predict(X), **scoring_params)
     else:
