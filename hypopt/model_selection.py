@@ -169,6 +169,16 @@ class GridSearch(BaseEstimator):
         inherit sklearn.base.BaseEstimator as seen in:
         https://github.com/cgnorthcutt/hyperopt 
 
+    param_grid : dict
+        The parameters to train with out on the validation set. Dictionary with
+        parameters names (string) as keys and lists of parameter settings to try
+        as values, or a list of such dictionaries, in which case the grids spanned
+        by each dictionary in the list are explored. This enables searching over
+        any sequence of parameter settings. Format is:
+        {'param1': ['list', 'of', 'options'], 'param2': ['l', 'o', 'o'], ...}\
+        For an example, check out:
+        scikit-learn.org/stable/modules/generated/sklearn.model_selection.ParameterGrid.html
+
     num_threads : int (chooses max # of threads by default),
         The number of CPU threads to use.
 
@@ -179,17 +189,27 @@ class GridSearch(BaseEstimator):
         Calls np.random.seed(seed = seed)'''
 
 
-    def __init__(self, model, num_threads = max_threads, seed = 0, cv_folds = 3):
+    def __init__(
+        self,
+        model,        
+        param_grid,
+        num_threads = max_threads,
+        seed = 0,
+        cv_folds = 3,
+    ):
         self.model = model
+        self.param_grid = param_grid
         self.num_threads = num_threads
         self.cv_folds = cv_folds
         self.seed = seed
+        
         np.random.seed(seed = seed)
         
         # Pre-define attributes for access after .fit() is called
         self.param_scores = None
         self.best_params = None
         self.best_score = None
+        self.best_estimator_ = None
         self.params = None
         self.scores = None
         
@@ -198,7 +218,6 @@ class GridSearch(BaseEstimator):
         self,
         X_train,
         y_train,
-        param_grid,
         X_val = None, # validation data if it exists (if None, use crossval)
         y_val = None, # validation labels if they exist (if None, use crossval)
         scoring = None,
@@ -218,16 +237,6 @@ class GridSearch(BaseEstimator):
 
         y_train : np.array of shape (n,) or (n, 1)
             The training labels. They can be noisy if you use model = RankPruning().
-
-        param_grid : dict
-            The parameters to train with out on the validation set. Dictionary with
-            parameters names (string) as keys and lists of parameter settings to try
-            as values, or a list of such dictionaries, in which case the grids spanned
-            by each dictionary in the list are explored. This enables searching over
-            any sequence of parameter settings. Format is:
-            {'param1': ['list', 'of', 'options'], 'param2': ['l', 'o', 'o'], ...}\
-            For an example, check out:
-            scikit-learn.org/stable/modules/generated/sklearn.model_selection.ParameterGrid.html
 
         X_val : np.array of shape (n0, m)
             The validation data to optimize paramters with. If you do not provide this,
@@ -272,7 +281,7 @@ class GridSearch(BaseEstimator):
                 "scoring": scoring,
                 "scoring_params": scoring_params,
             }
-            params = list(ParameterGrid(param_grid))
+            params = list(ParameterGrid(self.param_grid))
             jobs = list(zip([job_params]*len(params), params))
             if verbose:
                 print("Comparing", len(jobs), "parameter setting(s) using", self.num_threads, "CPU thread(s)", end=' ')
@@ -284,7 +293,7 @@ class GridSearch(BaseEstimator):
         else:
             model_cv = GridSearchCV(
                 estimator = self.model, 
-                param_grid = param_grid,
+                param_grid = self.param_grid,
                 scoring = scoring,
                 cv = self.cv_folds, 
                 n_jobs = self.num_threads,
@@ -301,6 +310,10 @@ class GridSearch(BaseEstimator):
         self.param_scores = list(zip(self.params, self.scores))
         self.best_score = self.scores[0]
         self.best_params = self.params[0]
+        
+        # Create alias to enable the same interface as sklearn.GridSearchCV
+        self.best_estimator_ = self.model
+        
         return self.model
     
     
