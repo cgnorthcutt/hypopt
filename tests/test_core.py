@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
@@ -14,7 +14,7 @@ from sklearn.linear_model import LogisticRegression
 import pytest
 
 
-# In[2]:
+# In[ ]:
 
 
 from sklearn.base import BaseEstimator
@@ -195,7 +195,7 @@ def test_regression(
         }
 
     # Grid-search all parameter combinations using a validation set.
-    gs = GridSearch(model = model, param_grid, )
+    gs = GridSearch(model = model, param_grid = param_grid, )
     gs.fit(
         X_train, 
         y_train, 
@@ -258,7 +258,7 @@ def test_gridsearch_crossval(
         }
 
     # Grid-search all parameter combinations WITHOUT a validation set.
-    gs = GridSearch(model = model, param_grid, )
+    gs = GridSearch(model = model, param_grid = param_grid, )
     gs.fit(X_train, y_train, scoring = scoring, verbose = False)
         
     # Compare with default model without hyperopt
@@ -338,7 +338,7 @@ def test_prob_methods():
     param_grid = {'C': [1, 10, 100, 120, 150]}
         
     # Grid-search all parameter combinations using a validation set.
-    model = GridSearch(model = LogisticRegression(), param_grid, )
+    model = GridSearch(model = LogisticRegression(), param_grid = param_grid, )
     model.fit(X_train, y_train, verbose = False)
     
     assert(model.predict(X_test) is not None)
@@ -416,7 +416,7 @@ def test_scoring():
             )
 
 
-# In[68]:
+# In[ ]:
 
 
 def test_scoring_invalid_metric():
