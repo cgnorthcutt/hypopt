@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 # Python 2 and 3 compatibility
@@ -23,7 +23,7 @@ max_threads = mp.cpu_count()
 SUPPRESS_WARNINGS = False
 
 
-# In[2]:
+# In[ ]:
 
 
 def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
