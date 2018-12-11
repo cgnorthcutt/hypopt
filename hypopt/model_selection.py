@@ -203,7 +203,7 @@ class GridSearch(BaseEstimator):
         y_val = None, # validation labels if they exist (if None, use crossval)
         scoring = None,
         scoring_params = None,
-        verbose = True,
+        verbose = False,
     ):
         '''Returns the model trained with the hyperparameters that maximize accuracy
         on the (X_val, y_val) validation data (if specified), else the parameters
