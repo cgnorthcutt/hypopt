@@ -62,8 +62,8 @@ Basic usage
      {'C': [1, 10, 100], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
     ]
    # Grid-search all parameter combinations using a validation set.
-   gs = GridSearch(model = SVR())
-   gs.fit(X_train, y_train, param_grid, X_val, y_val)
+   gs = GridSearch(model = SVR(), param_grid = param_grid)
+   gs.fit(X_train, y_train, X_val, y_val)
    print('Test Score for Optimized Parameters:', gs.score(X_test, y_test))
    
 Choosing the scoring metric to optimize
@@ -76,7 +76,7 @@ It's easy to use a different scoring metric using the ``scoring`` parameter in `
 .. code-block:: python
 
     # This will use f1 score as the scoring metric that you optimize.
-    gs.fit(X_train, y_train, params, X_val, y_val, scoring='f1')
+    gs.fit(X_train, y_train, X_val, y_val, scoring='f1')
 
 * For classification, `hypopt` supports these string-named metrics: 'accuracy', 'brier_score_loss', 'average_precision', 'f1', 'f1_micro', 'f1_macro', 'f1_weighted', 'neg_log_loss', 'precision', 'recall', or 'roc_auc'. 
 * For regression, `hypopt` supports: "explained_variance", "neg_mean_absolute_error", "neg_mean_squared_error", "neg_mean_squared_log_error", "neg_median_absolute_error", "r2".
@@ -87,7 +87,7 @@ You can also create your own metric ``your_custom_score_func(y_true, y_pred)`` b
 
     from sklearn.metrics import make_scorer
     scorer = make_scorer(your_custom_scoring_func)
-    opt.fit(X_train, y_train, params, X_val, y_val, scoring=scorer)
+    opt.fit(X_train, y_train, X_val, y_val, scoring=scorer)
 
 Minimal working examples
 ^^^^^^^^^^^^^^^^^^^^^^^^
