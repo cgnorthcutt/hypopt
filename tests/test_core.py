@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
@@ -14,7 +14,7 @@ from sklearn.linear_model import LogisticRegression
 import pytest
 
 
-# In[ ]:
+# In[2]:
 
 
 from sklearn.base import BaseEstimator
@@ -123,11 +123,10 @@ def test_classification(
         }
 
     # Grid-search all parameter combinations using a validation set.
-    opt = GridSearch(model)
+    opt = GridSearch(model = model, param_grid = param_grid, )
     opt.fit(
         X_train, 
         y_train, 
-        param_grid, 
         X_val, 
         y_val, 
         scoring = scoring,
@@ -196,11 +195,10 @@ def test_regression(
         }
 
     # Grid-search all parameter combinations using a validation set.
-    gs = GridSearch(model = model)
+    gs = GridSearch(model = model, param_grid, )
     gs.fit(
         X_train, 
         y_train, 
-        param_grid, 
         X_val, 
         y_val, 
         scoring = scoring,
@@ -260,8 +258,8 @@ def test_gridsearch_crossval(
         }
 
     # Grid-search all parameter combinations WITHOUT a validation set.
-    gs = GridSearch(model = model)
-    gs.fit(X_train, y_train, param_grid, scoring = scoring, verbose = False)
+    gs = GridSearch(model = model, param_grid, )
+    gs.fit(X_train, y_train, scoring = scoring, verbose = False)
         
     # Compare with default model without hyperopt
     default = SVC(random_state=0)
@@ -340,8 +338,8 @@ def test_prob_methods():
     param_grid = {'C': [1, 10, 100, 120, 150]}
         
     # Grid-search all parameter combinations using a validation set.
-    model = GridSearch(LogisticRegression())
-    model.fit(X_train, y_train, param_grid, verbose = False)
+    model = GridSearch(model = LogisticRegression(), param_grid, )
+    model.fit(X_train, y_train, verbose = False)
     
     assert(model.predict(X_test) is not None)
     assert(model.predict_proba(X_test) is not None)
@@ -434,10 +432,10 @@ def test_scoring_invalid_metric():
 
 
 # def test_external_model():
-#     '''Requires the confidentlearning package'''
-#     from confidentlearning.classification import RankPruning
+#     '''Requires the cleanlab package'''
+#     from cleanlab.classification import LearningWithNoisyLabels as LNL
 #     test_classification(
-#         model = RankPruning(SVC(probability=True)),
+#         model = LNL(SVC(probability=True)),
 #         param_grid = {
 #             'prune_method':[
 #                 'prune_by_noise_rate', 
