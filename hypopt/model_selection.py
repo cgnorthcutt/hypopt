@@ -73,7 +73,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     elif scoring_metric == 'f1_weighted':
         return metrics.f1_score(y, model.predict(X), average = 'weighted', **scoring_params)
     elif scoring_metric == 'neg_log_loss':
-        return -1. * metrics.log_loss(y, model.predict(X), **scoring_params)
+        return -1. * metrics.log_loss(y, model.predict_proba(X), **scoring_params)
     elif scoring_metric == 'precision':
         return metrics.precision_score(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'recall':
@@ -123,7 +123,7 @@ def _run_thread_job(params):
                     model.predict(job_params["X_val"]),
                 )
         # You provided your own scoring function.
-        elif type(scoring) == metrics.scorer._PredictScorer: 
+        elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer]:
             score = scoring(model, job_params["X_val"], job_params["y_val"])
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
