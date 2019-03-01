@@ -131,4 +131,8 @@ All of the features of the ``hypopt`` package work with **any model**. Yes, any 
 PyTorch MNIST CNN Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* `Example (taken from the confidentlearning package) of a Pytorch MNIST CNN wrapped in the above class. <https://github.com/cgnorthcutt/confidentlearning/blob/master/examples/models/mnist_pytorch.py>`_
+Check out a PyTorch MNIST CNN wrapped in the above class `here <https://github.com/cgnorthcutt/cleanlab/blob/master/cleanlab/models/mnist_pytorch.py#L28>`__. You use any object instantion of this class with `hypopt` just as you would any scikit-learn model. Another example of a fully compliant class is the `LearningWithNoisyLabels() model <https://github.com/cgnorthcutt/cleanlab/blob/master/cleanlab/classification.py#L48>`__.
+
+If you don't wish to write this code yourself, there are existing packages to do this for you. For PyTorch, check out
+the ``skorch`` `Python package <https://skorch.readthedocs.io/en/stable/>` which will wrap your ``pytorch`` model
+into a ``scikit-learn`` compliant model.
