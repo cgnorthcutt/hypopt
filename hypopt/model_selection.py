@@ -190,7 +190,11 @@ class GridSearch(BaseEstimator):
         Calls np.random.seed(seed = seed)
 
     num_random_search : int (default None)
-        Number of randomized searches to make. Will not find global optima, but close approximation.'''
+        Number of randomized searches to make. Will not find global optima, but close approximation.
+
+    series: Bool (default False)
+        Whether to not use MP Pool in case Serializing large objects.
+        '''
 
 
     def __init__(
@@ -200,7 +204,8 @@ class GridSearch(BaseEstimator):
         num_threads = max_threads,
         seed = 0,
         cv_folds = 3,
-        num_random_search = None
+        num_random_search = None,
+        series = False
     ):
         self.model = model
         self.param_grid = param_grid
@@ -218,6 +223,7 @@ class GridSearch(BaseEstimator):
         self.params = None
         self.scores = None
         self.num_random_search = num_random_search
+        self.series = series
 
 
     def fit(
@@ -294,7 +300,7 @@ class GridSearch(BaseEstimator):
             if verbose:
                 print("Comparing", len(jobs), "parameter setting(s) using", self.num_threads, "CPU thread(s)", end=' ')
                 print("(", max(1, len(jobs) // self.num_threads), "job(s) per thread ).")
-            results = _parallel_param_opt(jobs, threads = self.num_threads)
+            results = _parallel_param_opt(jobs, threads = self.num_threads) if not self.series else [_run_thread_job(job) for job in jobs]
             results = [result for result in results if result is not None]
             models, scores = list(zip(*results))
             self.model = models[np.argmax(scores)]
