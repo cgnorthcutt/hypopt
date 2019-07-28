@@ -122,7 +122,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     elif scoring_metric == 'f1_weighted':
         return metrics.f1_score(y, model.predict(X), average = 'weighted', **scoring_params)
     elif scoring_metric == 'neg_log_loss':
-        return -1. * metrics.log_loss(y, model.predict(X), **scoring_params)
+        return -1. * metrics.log_loss(y, model.predict_proba(X), **scoring_params)
     elif scoring_metric == 'precision':
         return metrics.precision_score(y, model.predict(X), **scoring_params)
     elif scoring_metric == 'recall':
@@ -147,7 +147,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     
 
 # Analyze results in parallel on all cores.
-def _run_thread_job(model_params):  
+def _run_thread_job(model_params):
     try:
         # Seeding may be important for fair comparison of param settings.
         np.random.seed(seed = 0)
@@ -163,12 +163,11 @@ def _run_thread_job(model_params):
                 score = model.score(X_val, y_val)
             else:            
                 score = metrics.accuracy_score(
-                    y_val, 
+                    y_val,
                     model.predict(X_val),
                 )
-        # You provided your own scoring function.
-        elif type(scoring) == metrics.scorer._PredictScorer: 
-            score = scoring(model, X_val, y_val)
+        # Or you provided your own scoring class
+        elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer]             or metrics.scorer._PredictScorer in type(scoring).__bases__             or metrics.scorer._ProbaScorer in type(scoring).__bases__:
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
             score = _compute_score(
