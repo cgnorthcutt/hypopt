@@ -8,6 +8,7 @@
 from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
 
 # Imports
+import sys
 import inspect
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import GridSearchCV
@@ -16,11 +17,59 @@ import numpy as np
 import warnings
 
 # For parallel processing
-import multiprocessing as mp
-from multiprocessing import Pool
-max_threads = mp.cpu_count()
+import multiprocessing
+import multiprocessing.pool
 
 SUPPRESS_WARNINGS = False
+
+
+# In[ ]:
+
+
+# tqdm is a module used to print time-to-complete when multiprocessing is used.
+# This module is not necessary, and therefore is not a package dependency, but 
+# when installed it improves user experience for large datsets.
+try:
+    import tqdm
+    tqdm_exists = True
+except ImportError as e:
+    tqdm_exists = False
+    import warnings
+    w = '''If you want to see estimated completion times
+    while running methods in cleanlab.pruning, install tqdm
+    via "pip install tqdm".'''
+    warnings.warn(w)
+
+
+# In[ ]:
+
+
+# Set-up multiprocessing classes and methods
+
+class NoDaemonProcess(multiprocessing.Process):
+    # make 'daemon' attribute always return False
+    def _get_daemon(self):
+        return False
+    def _set_daemon(self, value):
+        pass
+    daemon = property(_get_daemon, _set_daemon)
+
+# We sub-class multiprocessing.pool.Pool instead of multiprocessing.Pool
+# because the latter is only a wrapper function, not a proper class.
+class MyPool(multiprocessing.pool.Pool):
+    Process = NoDaemonProcess
+    
+# For python 2/3 compatibility, define pool context manager
+# to support the 'with' statement in Python 2
+if sys.version_info[0] == 2:
+    from contextlib import contextmanager
+    @contextmanager
+    def multiprocessing_context(*args, **kwargs):
+        pool = MyPool(*args, **kwargs)
+        yield pool
+        pool.terminate()
+else:
+    multiprocessing_context = MyPool
 
 
 # In[ ]:
@@ -36,7 +85,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
         The model must have model.fit(X,y) and model.predict(X) defined. Although it can
         work without it, its best if you also define model.score(X,y) so you can decide
         the scoring function for deciding the best parameters. If you are using an
-        sklearn model, everything will work out of the box. To use a model from a 
+        sklearn model, everything will work out of the box. To use a model from a
         different library is no problem, but you need to wrap it in a class and
         inherit sklearn.base.BaseEstimator as seen in:
         https://github.com/cgnorthcutt/hyperopt 
@@ -98,39 +147,34 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
     
 
 # Analyze results in parallel on all cores.
-def _run_thread_job(params):  
+def _run_thread_job(model_params):  
     try:
-        job_params, model_params = params
-        model = job_params["model"]
-        scoring = job_params["scoring"]
-        scoring_params = job_params["scoring_params"]
         # Seeding may be important for fair comparison of param settings.
         np.random.seed(seed = 0)
         if hasattr(model, 'seed') and not callable(model.seed): 
             model.seed = 0
         if hasattr(model, 'random_state') and not callable(model.random_state): 
             model.random_state = 0
-            
         model.set_params(**model_params)    
-        model.fit(job_params["X_train"], job_params["y_train"])
+        model.fit(X_train, y_train)
         # Compute the score for the given parameters, scoring metric, and model.
         if scoring is None: # use default model.score() if it exists, else use accuracy
             if hasattr(model, 'score'):        
-                score = model.score(job_params["X_val"], job_params["y_val"])
+                score = model.score(X_val, y_val)
             else:            
                 score = metrics.accuracy_score(
-                    job_params["y_val"], 
-                    model.predict(job_params["X_val"]),
+                    y_val, 
+                    model.predict(X_val),
                 )
         # You provided your own scoring function.
         elif type(scoring) == metrics.scorer._PredictScorer: 
-            score = scoring(model, job_params["X_val"], job_params["y_val"])
+            score = scoring(model, X_val, y_val)
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
             score = _compute_score(
                 model = model,
-                X = job_params["X_val"], 
-                y = job_params["y_val"],
+                X = X_val, 
+                y = y_val,
                 scoring_metric = scoring,
                 scoring_params = scoring_params,
             )
@@ -138,15 +182,49 @@ def _run_thread_job(params):
 
     except Exception as e:
         if not SUPPRESS_WARNINGS:
-            warnings.warn('ERROR in thread' + str(mp.current_process()) + "with exception:\n" + str(e))
+            warnings.warn('ERROR in thread' + str(multiprocessing.current_process()) + "with exception:\n" + str(e))
             return None
 
-def _parallel_param_opt(lst, threads=max_threads):
-    pool = mp.Pool(threads)
-    results = pool.map(_run_thread_job, lst)
-    pool.close()
-    pool.join()
-    return results
+
+def _parallel_param_opt(
+    jobs,
+    num_threads=None,
+):
+    if num_threads is None:
+        num_threads = multiprocessing.cpu_count()
+    K = len(jobs)
+    with multiprocessing_context(
+        num_threads,
+#         initializer=_make_shared_immutables_global,
+#         initargs=(model, X_train, y_train, X_val, y_val, scoring, scoring_params),
+    ) as p:
+        if tqdm_exists:
+            results = tqdm.tqdm(p.imap(_run_thread_job, jobs), total=K)
+        else:
+            results = p.map(_run_thread_job, jobs)
+        return [r for r in results if r is not None]
+
+
+def _make_shared_immutables_global(
+    _model,
+    _X_train,
+    _y_train,
+    _X_val,
+    _y_val,
+    _scoring,
+    _scoring_params,
+):
+    '''Shares memory objects across child processes.
+    ASSUMES none of these will change!'''
+
+    global model, X_train, y_train, X_val, y_val, scoring, scoring_params
+    model = _model
+    X_train = _X_train
+    y_train = _y_train
+    X_val = _X_val
+    y_val = _y_val
+    scoring = _scoring
+    scoring_params = _scoring_params
 
 
 # In[ ]:
@@ -186,22 +264,29 @@ class GridSearch(BaseEstimator):
         The number of cross-validation folds to use if no X_val, y_val is specified.
 
     seed : int (default 0)
-        Calls np.random.seed(seed = seed)'''
+        Calls np.random.seed(seed = seed)
+        
+    parallelize : bool
+        Default (true). set to False if you have problems. Will make hypopt slower.'''
 
 
     def __init__(
         self,
         model,        
         param_grid,
-        num_threads = max_threads,
-        seed = 0,
-        cv_folds = 3,
+        num_threads=None,
+        seed=0,
+        cv_folds=3,
+        parallelize=True,
     ):
+        if num_threads is None:
+            num_threads = multiprocessing.cpu_count()
         self.model = model
         self.param_grid = param_grid
         self.num_threads = num_threads
         self.cv_folds = cv_folds
         self.seed = seed
+        self.parallelize = parallelize
         
         np.random.seed(seed = seed)
         
@@ -271,23 +356,23 @@ class GridSearch(BaseEstimator):
         
         validation_data_exists = X_val is not None and y_val is not None
         if validation_data_exists:
-            # Duplicate data for each job (expensive)
-            job_params = {
-                "model": self.model,
-                "X_train": X_train,
-                "y_train": y_train,
-                "X_val": X_val,
-                "y_val": y_val,
-                "scoring": scoring,
-                "scoring_params": scoring_params,
-            }
             params = list(ParameterGrid(self.param_grid))
-            jobs = list(zip([job_params]*len(params), params))
             if verbose:
-                print("Comparing", len(jobs), "parameter setting(s) using", self.num_threads, "CPU thread(s)", end=' ')
-                print("(", max(1, len(jobs) // self.num_threads), "job(s) per thread ).")
-            results = _parallel_param_opt(jobs, threads = self.num_threads)
-            results = [result for result in results if result is not None]
+                print("Comparing", len(params), "parameter setting(s) using", self.num_threads, "CPU thread(s)", end=' ')
+                print("(", max(1, len(params) // self.num_threads), "job(s) per thread ).")
+            _make_shared_immutables_global(
+                _model=self.model,
+                _X_train=X_train,
+                _y_train=y_train,
+                _X_val=X_val,
+                _y_val=y_val,
+                _scoring=scoring,
+                _scoring_params=scoring_params,
+            )
+            if self.parallelize:
+                results = _parallel_param_opt(params, self.num_threads)
+            else:
+                results = [_run_thread_job(job) for job in params]
             models, scores = list(zip(*results))
             self.model = models[np.argmax(scores)]
         else:
