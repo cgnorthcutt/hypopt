@@ -1,9 +1,6 @@
 
 # coding: utf-8
 
-# In[ ]:
-
-
 # Python 2 and 3 compatibility
 from __future__ import print_function, absolute_import, division, unicode_literals, with_statement
 
@@ -22,10 +19,6 @@ import multiprocessing.pool
 
 SUPPRESS_WARNINGS = False
 
-
-# In[ ]:
-
-
 # tqdm is a module used to print time-to-complete when multiprocessing is used.
 # This module is not necessary, and therefore is not a package dependency, but 
 # when installed it improves user experience for large datsets.
@@ -39,9 +32,6 @@ except ImportError as e:
     while running methods in cleanlab.pruning, install tqdm
     via "pip install tqdm".'''
     warnings.warn(w)
-
-
-# In[ ]:
 
 
 # Set-up multiprocessing classes and methods
@@ -70,9 +60,6 @@ if sys.version_info[0] == 2:
         pool.terminate()
 else:
     multiprocessing_context = MyPool
-
-
-# In[ ]:
 
 
 def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
@@ -143,8 +130,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
         return metrics.r2_score(y, model.predict(X), **scoring_params)
     else:
         raise ValueError(scoring_metric + 'is not a supported metric.')
-    
-    
+
 
 # Analyze results in parallel on all cores.
 def _run_thread_job(model_params):
@@ -167,7 +153,10 @@ def _run_thread_job(model_params):
                     model.predict(X_val),
                 )
         # Or you provided your own scoring class
-        elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer]             or metrics.scorer._PredictScorer in type(scoring).__bases__             or metrics.scorer._ProbaScorer in type(scoring).__bases__:
+        elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer] \
+            or metrics.scorer._PredictScorer in type(scoring).__bases__ \
+            or metrics.scorer._ProbaScorer in type(scoring).__bases__:
+            score = scoring(model, job_params["X_val"], job_params["y_val"])
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
             score = _compute_score(
@@ -181,7 +170,8 @@ def _run_thread_job(model_params):
 
     except Exception as e:
         if not SUPPRESS_WARNINGS:
-            warnings.warn('ERROR in thread' + str(multiprocessing.current_process()) + "with exception:\n" + str(e))
+            pname = str(multiprocessing.current_process())
+            warnings.warn('ERROR in thread' + pname + "with exception:\n" + str(e))
             return None
 
 
@@ -226,9 +216,6 @@ def _make_shared_immutables_global(
     scoring_params = _scoring_params
 
 
-# In[ ]:
-
-
 from sklearn.base import BaseEstimator
 class GridSearch(BaseEstimator):
     '''docstring
@@ -264,7 +251,7 @@ class GridSearch(BaseEstimator):
 
     seed : int (default 0)
         Calls np.random.seed(seed = seed)
-        
+
     parallelize : bool
         Default (true). set to False if you have problems. Will make hypopt slower.'''
 
@@ -286,9 +273,9 @@ class GridSearch(BaseEstimator):
         self.cv_folds = cv_folds
         self.seed = seed
         self.parallelize = parallelize
-        
+
         np.random.seed(seed = seed)
-        
+
         # Pre-define attributes for access after .fit() is called
         self.param_scores = None
         self.best_params = None
@@ -296,8 +283,8 @@ class GridSearch(BaseEstimator):
         self.best_estimator_ = None
         self.params = None
         self.scores = None
-        
-    
+
+
     def fit(
         self,
         X_train,
@@ -344,7 +331,7 @@ class GridSearch(BaseEstimator):
             Then pass that object in as the value for this scoring parameter. See:
             http://scikit-learn.org/stable/modules/generated/sklearn.metrics.make_scorer.html
             If scoring is None, model.score() is used by default.
-        
+
         scoring_params : dict
             All other params you want passed to the scoring function.
             Params will be passed as scoring_func(**scoring_params).
@@ -352,12 +339,13 @@ class GridSearch(BaseEstimator):
 
         verbose : bool
             Print out useful information when running.'''
-        
+
         validation_data_exists = X_val is not None and y_val is not None
         if validation_data_exists:
             params = list(ParameterGrid(self.param_grid))
             if verbose:
-                print("Comparing", len(params), "parameter setting(s) using", self.num_threads, "CPU thread(s)", end=' ')
+                print("Comparing", len(params), "parameter setting(s) using",
+                      self.num_threads, "CPU thread(s)", end=' ')
                 print("(", max(1, len(params) // self.num_threads), "job(s) per thread ).")
             _make_shared_immutables_global(
                 _model=self.model,
@@ -387,20 +375,20 @@ class GridSearch(BaseEstimator):
             scores = model_cv.cv_results_['mean_test_score']
             params = model_cv.cv_results_['params']
             self.model = model_cv.best_estimator_
-            
+
         best_score_ranking_idx = np.argsort(scores)[::-1]
         self.scores = [scores[z] for z in best_score_ranking_idx]
         self.params = [params[z] for z in best_score_ranking_idx]
         self.param_scores = list(zip(self.params, self.scores))
         self.best_score = self.scores[0]
         self.best_params = self.params[0]
-        
+
         # Create alias to enable the same interface as sklearn.GridSearchCV
         self.best_estimator_ = self.model
-        
+
         return self.model
-    
-    
+
+
     def predict(self, X):
         '''Returns a binary vector of predictions.
 
@@ -410,8 +398,8 @@ class GridSearch(BaseEstimator):
           The test data as a feature matrix.'''
 
         return self.model.predict(X)
-  
-  
+
+
     def predict_proba(self, X):
         '''Returns a vector of probabilties P(y=k)
         for each example in X.
@@ -422,8 +410,8 @@ class GridSearch(BaseEstimator):
           The test data as a feature matrix.'''
 
         return self.model.predict_proba(X)
-    
-    
+
+
     def score(self, X, y, sample_weight=None):
         '''Returns the model's score on a test set X with labels y.
         Uses the models default scoring function.
@@ -432,27 +420,30 @@ class GridSearch(BaseEstimator):
         ----------
         X : np.array of shape (n, m)
           The test data as a feature matrix.
-          
+
         y : np.array<int> of shape (n,) or (n, 1)
           The test classification labels as an array.
-          
+
         y : np.array<int> of shape (n,) or (n, 1)
           The test classification labels as an array.
-          
+
         sample_weight : np.array<float> of shape (n,) or (n, 1)
           Weights each example when computing the score / accuracy.'''
-        
+
         if hasattr(self.model, 'score'):
-        
+
             # Check if sample_weight in clf.score(). Compatible with Python 2/3.
-            if hasattr(inspect, 'getfullargspec') and                 'sample_weight' in inspect.getfullargspec(self.model.score).args or                 hasattr(inspect, 'getargspec') and                 'sample_weight' in inspect.getargspec(self.model.score).args:  
+            if hasattr(inspect, 'getfullargspec') and \
+            'sample_weight' in inspect.getfullargspec(self.model.score).args or \
+            hasattr(inspect, 'getargspec') and \
+            'sample_weight' in inspect.getargspec(self.model.score).args:  
                 return self.model.score(X, y, sample_weight=sample_weight)
             else:
                 return self.model.score(X, y)
         else:
             return metrics.accuracy_score(y, self.model.predict(X), sample_weight=sample_weight) 
-        
-    
+
+
     def get_param_scores(self):
         '''Accessor to return param_scores, a list of tuples
         containing pairs of parameters and the associated score
@@ -482,4 +473,3 @@ class GridSearch(BaseEstimator):
         '''Accessor to return scores, a list of scores ordered
         by descending score on the validation set.'''
         return self.scores
-
