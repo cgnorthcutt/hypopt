@@ -133,7 +133,7 @@ def _compute_score(model, X, y, scoring_metric = None, scoring_params = None):
 
 
 # Analyze results in parallel on all cores.
-def _run_thread_job(model_params):
+def _run_thread_job(model_params):  # pragma: no cover
     try:
         # Seeding may be important for fair comparison of param settings.
         np.random.seed(seed = 0)
