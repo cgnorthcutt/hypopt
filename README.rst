@@ -4,7 +4,7 @@
 
 |pypi| |py_versions| |build_status| |coverage|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/hyperopt.svg
+.. |pypi| image:: https://img.shields.io/pypi/v/hypopt.svg
     :target: https://pypi.org/pypi/hypopt/
 .. |py_versions| image:: https://img.shields.io/pypi/pyversions/hypopt.svg
     :target: https://pypi.org/pypi/hypopt/
