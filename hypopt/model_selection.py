@@ -344,9 +344,12 @@ class GridSearch(BaseEstimator):
         if validation_data_exists:
             params = list(ParameterGrid(self.param_grid))
             if verbose:
-                print("Comparing", len(params), "parameter setting(s) using",
-                      self.num_threads, "CPU thread(s)", end=' ')
-                print("(", max(1, len(params) // self.num_threads), "job(s) per thread ).")
+                if self.parallelize:
+                    print("Comparing", len(params), "parameter setting(s) using",
+                          self.num_threads, "CPU thread(s)", end=' ')
+                    print("(", max(1, len(params) // self.num_threads), "job(s) per thread ).")
+                else:
+                    print("Parallelization disabled. Comparing", len(params), "parameter setting(s) sequentially.")
             _make_shared_immutables_global(
                 _model=self.model,
                 _X_train=X_train,
