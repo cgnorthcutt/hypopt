@@ -7,6 +7,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 # Imports
 import sys
 import inspect
+from sklearn.base import clone
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
@@ -141,32 +142,33 @@ def _run_thread_job(model_params):  # pragma: no cover
             model.seed = 0
         if hasattr(model, 'random_state') and not callable(model.random_state): 
             model.random_state = 0
-        model.set_params(**model_params)    
-        model.fit(X_train, y_train)
+        model.set_params(**model_params)
+        model_clone = clone(model)    
+        model_clone.fit(X_train, y_train)
         # Compute the score for the given parameters, scoring metric, and model.
         if scoring is None: # use default model.score() if it exists, else use accuracy
-            if hasattr(model, 'score'):        
-                score = model.score(X_val, y_val)
+            if hasattr(model_clone, 'score'):        
+                score = model_clone.score(X_val, y_val)
             else:            
                 score = metrics.accuracy_score(
                     y_val,
-                    model.predict(X_val),
+                    model_clone.predict(X_val),
                 )
         # Or you provided your own scoring class
         elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer] \
             or metrics.scorer._PredictScorer in type(scoring).__bases__ \
             or metrics.scorer._ProbaScorer in type(scoring).__bases__:
-            score = scoring(model, job_params["X_val"], job_params["y_val"])
+            score = scoring(model_clone, job_params["X_val"], job_params["y_val"])
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
             score = _compute_score(
-                model = model,
+                model = model_clone,
                 X = X_val, 
                 y = y_val,
                 scoring_metric = scoring,
                 scoring_params = scoring_params,
             )
-        return (model, score)
+        return (model_clone, score)
 
     except Exception as e:
         if not SUPPRESS_WARNINGS:
