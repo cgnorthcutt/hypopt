@@ -74,9 +74,10 @@ print('VALIDATION SCORE (default parameters):', val_score)
 # In[5]:
 
 
-gs_val = GridSearch(model = MLPClassifier(max_iter=50, random_state=0))
+gs_val = GridSearch(model = MLPClassifier(max_iter=50, random_state=0), param_grid=param_grid,\
+     parallelize=False)
 print("Grid-search using a validation set.\n","-"*79)
-get_ipython().magic(u"time gs_val.fit(X_train, y_train, param_grid, X_val, y_val, scoring = 'accuracy')")
+get_ipython().magic(u"time gs_val.fit(X_train, y_train, X_val, y_val, scoring = 'accuracy')")
 test_score = round(gs_val.score(X_test, y_test), 4)
 val_score = round(gs_val.score(X_val, y_val), 4)
 print('\nTEST SCORE (hyper-parameter optimization with validation set):', test_score)
@@ -86,10 +87,10 @@ print('VALIDATION SCORE (hyper-parameter optimization with validation set):', va
 # In[6]:
 
 
-gs_cv = GridSearch(model = MLPClassifier(max_iter=50, random_state=0), cv_folds=6)
+gs_cv = GridSearch(model=MLPClassifier(max_iter=50, random_state=0), param_grid=param_grid, cv_folds=6)
 print("\n\nLet's see how long grid-search takes to run when we don't use a validation set.")
 print("Grid-search using cross-validation.\n","-"*79)
-get_ipython().magic(u'time gs_cv.fit(X_train, y_train, param_grid)')
+get_ipython().magic(u'time gs_cv.fit(X_train, y_train)')
 test_score = round(gs_cv.score(X_test, y_test), 4)
 val_score = round(gs_cv.score(X_val, y_val), 4)
 print('\nTEST SCORE (hyper-parameter optimization with cross-validation):', test_score)
