@@ -11,6 +11,10 @@ from sklearn.base import clone
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
+try:
+    from sklearn.metrics import _scorer as scorer
+except:
+    from sklearn.metrics import scorer
 import numpy as np
 import warnings
 
@@ -155,9 +159,9 @@ def _run_thread_job(model_params):  # pragma: no cover
                     model_clone.predict(X_val),
                 )
         # Or you provided your own scoring class
-        elif type(scoring) in [metrics.scorer._PredictScorer, metrics.scorer._ProbaScorer] \
-            or metrics.scorer._PredictScorer in type(scoring).__bases__ \
-            or metrics.scorer._ProbaScorer in type(scoring).__bases__:
+        elif type(scoring) in [scorer._PredictScorer, scorer._ProbaScorer] \
+            or scorer._PredictScorer in type(scoring).__bases__ \
+            or scorer._ProbaScorer in type(scoring).__bases__:
             score = scoring(model_clone, job_params["X_val"], job_params["y_val"])
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
@@ -319,7 +323,7 @@ class GridSearch(BaseEstimator):
             The validation labels to optimize paramters with. If you do not provide this,
             cross validation on the training set will be used.
             
-        scoring : str or metrics.scorer._PredictScorer object
+        scoring : str or metrics._scorer._PredictScorer object
             If a str is passed in, it must be in ['accuracy', 'brier_score_loss',
             'f1', 'f1_micro', 'f1_macro', 'f1_weighted', 'neg_log_loss',
             'average_precision', precision', 'recall', 'roc_auc',
