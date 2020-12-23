@@ -190,8 +190,8 @@ def _parallel_param_opt(
     K = len(jobs)
     with multiprocessing_context(
         num_threads,
-#         initializer=_make_shared_immutables_global,
-#         initargs=(model, X_train, y_train, X_val, y_val, scoring, scoring_params),
+        initializer=_make_shared_immutables_global,
+        initargs=(model, X_train, y_train, X_val, y_val, scoring, scoring_params),
     ) as p:
         if tqdm_exists:
             results = tqdm.tqdm(p.imap(_run_thread_job, jobs), total=K)
