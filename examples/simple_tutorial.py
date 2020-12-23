@@ -74,8 +74,7 @@ print('VALIDATION SCORE (default parameters):', val_score)
 # In[5]:
 
 
-gs_val = GridSearch(model = MLPClassifier(max_iter=50, random_state=0), param_grid=param_grid,\
-     parallelize=False)
+gs_val = GridSearch(model = MLPClassifier(max_iter=50, random_state=0), param_grid=param_grid)
 print("Grid-search using a validation set.\n","-"*79)
 get_ipython().magic(u"time gs_val.fit(X_train, y_train, X_val, y_val, scoring = 'accuracy')")
 test_score = round(gs_val.score(X_test, y_test), 4)
