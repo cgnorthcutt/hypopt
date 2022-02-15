@@ -159,10 +159,11 @@ def _run_thread_job(model_params):  # pragma: no cover
                     model_clone.predict(X_val),
                 )
         # Or you provided your own scoring class
-        elif type(scoring) in [scorer._PredictScorer, scorer._ProbaScorer] \
+        elif type(scoring) in [scorer._ThresholdScorer, scorer._PredictScorer, scorer._ProbaScorer] \
             or scorer._PredictScorer in type(scoring).__bases__ \
-            or scorer._ProbaScorer in type(scoring).__bases__:
-            score = scoring(model_clone, job_params["X_val"], job_params["y_val"])
+            or scorer._ProbaScorer in type(scoring).__bases__ \
+            or scorer._ThresholdScorer in type(scoring).__bases__:
+            score = scoring(model_clone, X_val, y_val)
         # You provided a string specifying the metric, e.g. 'accuracy'
         else:
             score = _compute_score(
